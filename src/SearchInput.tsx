@@ -1,56 +1,27 @@
 import { TextField } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useCallback } from 'react';
 
-let timer: number | null = null;
-const debounce = (callee: (...args: any[]) => void, timeoutMs: number) => {
+let queryDebounce: number;
 
-
-    return (...args: any[]) => {
-        if (timer !== null) {
-            clearTimeout(timer);
-        }
-
-        timer = setTimeout(() => {
-            callee(...args);
-            timer = null;
-        }, timeoutMs);
-    };
-};
-
-type Props = {
+type TSearchInputProps = {
     onChange: (value: string) => void;
 };
 
-export const SearchInput = ({ onChange }: Props) => {
-    const [value, setValue] = useState('');
-
-    const handleChangeDebounced = debounce((newValue: string) => {
-        console.log('Debounced value:', newValue);
-        console.log('New value:', newValue);
-        onChange(newValue);
-    }, 500);
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+export const SearchInput = ({ onChange }: TSearchInputProps) => {
+    const handleChange = useCallback((event: any) => {
         const newValue = event.target.value;
-        setValue(newValue);
-        handleChangeDebounced(newValue);
-    };
-
-    useEffect(() => {
-        return () => {
-            if (timer !== null) {
-                clearTimeout(timer);
-            }
-        };
-    });
+        clearInterval(queryDebounce);
+        queryDebounce = setTimeout(() => {
+            onChange(newValue);
+        }, 500);
+    }, [onChange]);
 
     return (
         <>
             <TextField
                 id="outlined-basic"
                 variant="outlined"
-                onChange={handleChange}
-                value={value}
+                onKeyUp={handleChange}
             />
         </>
     );

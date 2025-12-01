@@ -3,7 +3,7 @@ import { SearchInput } from './SearchInput'
 
 const App = () => {
   const handleSearchChange = (value: string) => {
-    console.log(`Запрос: ${value}`);
+    console.log(`Запрос:`, { value });
   };
 
   return (
